@@ -1,16 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
 
 namespace ScreenTime
 {
@@ -36,6 +24,8 @@ namespace ScreenTime
 
             HideWhenStartTextBox.Text = DefaultSettings.Default.HideWhenStart.ToString();
             RefreshListBoxInterval_sTextBox.Text = DefaultSettings.Default.RefreshListBoxInterval_s.ToString();
+
+            JsonDataFolderPathTextBox.Text = DefaultSettings.Default.JsonDataFolderPath;
         }
         private void LoadSettings()
         {
@@ -49,6 +39,8 @@ namespace ScreenTime
 
             HideWhenStartTextBox.Text = Settings.Default.HideWhenStart.ToString();
             RefreshListBoxInterval_sTextBox.Text = Settings.Default.RefreshListBoxInterval_s.ToString();
+
+            JsonDataFolderPathTextBox.Text = Settings.Default.JsonDataFolderPath;
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -96,6 +88,8 @@ namespace ScreenTime
                     break;
             }
             Settings.Default.RefreshListBoxInterval_s = Int32.Parse(RefreshListBoxInterval_sTextBox.Text);
+
+            Settings.Default.JsonDataFolderPath = JsonDataFolderPathTextBox.Text;
             Settings.Default.Save();
             Close();
         }

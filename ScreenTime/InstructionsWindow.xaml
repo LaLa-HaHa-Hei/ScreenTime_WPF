@@ -1,0 +1,12 @@
+﻿<Window x:Class="ScreenTime.InstructionsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ScreenTime"
+        mc:Ignorable="d"
+        Title="注意事项" Height="371" Width="384">
+    <Grid>
+        <TextBlock TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto"><Run/><LineBreak/><Run Text="如果打开的开机自启动后修改了本程序的名字也就是&quot;ScreenTime.exe&quot;，开机自启动将会失效，需要关掉再开启就好。可以打开注册表(regedit)在\HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run下,叫ScreenTime"/><LineBreak/><Run/><LineBreak/><Run Text="程序所在的目录下&quot;user-data&quot;可以在程序关闭时删掉，里面分别放了 历史记录，截屏，其他程序的图标"/><LineBreak/><Run/><LineBreak/><Run Text="ScreenTime.dll.config文件是配置文件，如果对编程有基础可以谨慎修改，最好通过本程序修改"/><LineBreak/><Run/><LineBreak/><Run Text="本程序是记录哪个窗口获得焦点的时间，并不一定是最上面的窗口"/><LineBreak/><Run/><LineBreak/><Run Text="我学C#也没多长时间，非常欢迎大家帮我改进代码！"/><LineBreak/><Run Text="希望可以共同交流"/><Run Text="！QQ群：726549790"/><LineBreak/><Run Text="bilibili,"/><Run Language="zh-cn" Text="微信"/><Run Text="视频号,抖音,QQ小世界"/><Run Text="，"/><Run Text="都叫“代码见三”"/><LineBreak/><Run/></TextBlock>
+    </Grid>
+</Window>

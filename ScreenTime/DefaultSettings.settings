@@ -6,10 +6,10 @@
       <Value Profile="(Default)">10</Value>
     </Setting>
     <Setting Name="ExeIconFolderPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">.\exe_icon</Value>
+      <Value Profile="(Default)">.\user_data\exe_icon</Value>
     </Setting>
     <Setting Name="ScreenshotFolderPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">.\screenshot</Value>
+      <Value Profile="(Default)">.\user_data\screenshot</Value>
     </Setting>
     <Setting Name="GetTopWindowInterval_s" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
@@ -25,6 +25,9 @@
     </Setting>
     <Setting Name="HideWhenStart" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="JsonDataFolderPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\user_data\data</Value>
     </Setting>
   </Settings>
 </SettingsFile>

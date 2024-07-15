@@ -37,7 +37,7 @@ namespace ScreenTime {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(".\\exe_icon")]
+        [global::System.Configuration.DefaultSettingValueAttribute(".\\user_data\\exe_icon")]
         public string ExeIconFolderPath {
             get {
                 return ((string)(this["ExeIconFolderPath"]));
@@ -49,7 +49,7 @@ namespace ScreenTime {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(".\\screenshot")]
+        [global::System.Configuration.DefaultSettingValueAttribute(".\\user_data\\screenshot")]
         public string ScreenshotFolderPath {
             get {
                 return ((string)(this["ScreenshotFolderPath"]));
@@ -116,6 +116,18 @@ namespace ScreenTime {
             }
             set {
                 this["HideWhenStart"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".\\user_data\\data")]
+        public string JsonDataFolderPath {
+            get {
+                return ((string)(this["JsonDataFolderPath"]));
+            }
+            set {
+                this["JsonDataFolderPath"] = value;
             }
         }
     }

@@ -33,6 +33,7 @@
             <MenuItem x:Name="SettingsMenuItem" Header="设置" Click="SettingsMenuItem_Click"/>
             <MenuItem Header="帮助">
                 <MenuItem x:Name="OpenInstallationDirectoryMenuItem" Header="打开安装目录" Click="OpenInstallationDirectoryMenuItem_Click"/>
+                <MenuItem x:Name="instructions" Header="注意事项" Click="instructions_Click"></MenuItem>
             </MenuItem>
         </Menu>
         <ListBox x:Name="TimeListBox"  ItemContainerStyle="{DynamicResource ListBoxItemContainerStyle}" Margin="0,20,0,20" ScrollViewer.CanContentScroll="True"/>
