@@ -1,0 +1,30 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ScreenTime" GeneratedClassName="DefaultSettings">
+  <Profiles />
+  <Settings>
+    <Setting Name="JpegQuality" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="ExeIconFolderPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\exe_icon</Value>
+    </Setting>
+    <Setting Name="ScreenshotFolderPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\screenshot</Value>
+    </Setting>
+    <Setting Name="GetTopWindowInterval_s" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="Screenshot" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ScreenshotInterval_s" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">240</Value>
+    </Setting>
+    <Setting Name="RefreshListBoxInterval_s" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="HideWhenStart" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
