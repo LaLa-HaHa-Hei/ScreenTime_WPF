@@ -79,7 +79,7 @@ namespace ScreenTime
             //Debug.WriteLine(Settings.Default.ExeIconFolderPath);
             //Debug.WriteLine(Settings.Default.ScreenshotFolderPath);
             //加载数据
-            var data = DataStorage.LoadData($"{_absluteJsonDataFolderPath}\\{_today.ToString("yyyy-MM-dd")}.json");
+            var data = LoadData($"{_absluteJsonDataFolderPath}\\{_today.ToString("yyyy-MM-dd")}.json");
             if (data != null)
             {
                 ExeItemList = data;
@@ -237,8 +237,8 @@ namespace ScreenTime
                     else
                         _absluteJsonDataFolderPath = Settings.Default.JsonDataFolderPath;
                     //创建文件夹
-                    if (!Directory.Exists(_absluteJsonDataFolderPath + "\\" + _today.ToString("yyyy-MM-dd")))
-                        Directory.CreateDirectory(_absluteJsonDataFolderPath + "\\" + _today.ToString("yyyy-MM-dd"));
+                    if (!Directory.Exists(_absluteJsonDataFolderPath))
+                        Directory.CreateDirectory(_absluteJsonDataFolderPath);
                     break;
             }
         }
@@ -255,8 +255,14 @@ namespace ScreenTime
             time = time + (second % 60).ToString() + "秒";
             return time;
         }
+        public void SessionEnding() //关机时通过app.xaml.cs执行
+        {
+            SaveData($"{_absluteJsonDataFolderPath}\\{_today.ToString("yyyy-MM-dd")}.json", ExeItemList);
+        }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            //从任务管理器结束认为也会触发，所以先保存一下
+            SaveData($"{_absluteJsonDataFolderPath}\\{_today.ToString("yyyy-MM-dd")}.json", ExeItemList);
             HideWindow();
             e.Cancel = true;
         }
@@ -282,7 +288,7 @@ namespace ScreenTime
         }
         private void ExitApp()
         {
-            DataStorage.SaveData($"{_absluteJsonDataFolderPath}\\{_today.ToString("yyyy-MM-dd")}.json", ExeItemList);
+            SaveData($"{_absluteJsonDataFolderPath}\\{_today.ToString("yyyy-MM-dd")}.json", ExeItemList);
             TrayNotifyIcon.Visible = false;
             App.Current.Shutdown();
         }
@@ -425,6 +431,32 @@ namespace ScreenTime
             };
             w.Show();
         }
+
+        public static void SaveData(string filePath, ObservableCollection<ExeItemInfo> data)
+        {
+            JsonSerializerOptions options = new()
+            {
+                WriteIndented = true
+            };
+            string jsonString = JsonSerializer.Serialize(data, options);
+            File.WriteAllText(filePath, jsonString);
+        }
+        public static ObservableCollection<ExeItemInfo>? LoadData(string filePath)
+        {
+            if (File.Exists(filePath))
+            {
+                string jsonString = File.ReadAllText(filePath);
+                return JsonSerializer.Deserialize<ObservableCollection<ExeItemInfo>>(jsonString);
+            }
+            else
+                //return new ObservableCollection<ExeItemInfo>();
+                return null;
+        }
+        private void ViewHistoryMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            ViewHistoryWindow w = new(_absluteJsonDataFolderPath); //里面决定是否show
+            //w.Show();
+        }
     }
     public class ExeItemInfo : INotifyPropertyChanged
     {
@@ -541,30 +573,6 @@ namespace ScreenTime
         public void Pause()
         {
             _dispatcherTimer.Stop();
-        }
-    }
-    public class DataStorage
-    {
-        public static void SaveData(string filePath, ObservableCollection<ExeItemInfo> data)
-        {
-            JsonSerializerOptions options = new()
-            {
-                WriteIndented = true
-            };
-            string jsonString = JsonSerializer.Serialize(data, options);
-            File.WriteAllText(filePath, jsonString);
-        }
-
-        public static ObservableCollection<ExeItemInfo>? LoadData(string filePath)
-        {
-            if (File.Exists(filePath))
-            {
-                string jsonString = File.ReadAllText(filePath);
-                return JsonSerializer.Deserialize<ObservableCollection<ExeItemInfo>>(jsonString);
-            }
-            else
-                //return new ObservableCollection<ExeItemInfo>();
-                return null;
         }
     }
 }
