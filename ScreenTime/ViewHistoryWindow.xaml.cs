@@ -41,10 +41,13 @@ namespace ScreenTime
                 {
                     exeItemInfos.Sort((x, y) => y.Seconds.CompareTo(x.Seconds));
                     InitializeComponent();
+                    int totalTime = 0;
                     for (int i = 0; i < exeItemInfos.Count; i++)
                     {
+                        totalTime += exeItemInfos[i].Seconds;
                         TimeListBox.Items.Add(exeItemInfos[i]);
                     }
+                    TotalTimeTextBlock.Text = "总时间：" + ExeItemInfo.SecondToTime(totalTime);
                     Show();
                 }
                 else

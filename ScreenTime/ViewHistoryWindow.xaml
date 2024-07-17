@@ -29,6 +29,9 @@
         </Style>
     </Window.Resources>
     <Grid>
-        <ListBox x:Name="TimeListBox" ItemContainerStyle="{DynamicResource ListBoxItemContainerStyle}" ScrollViewer.CanContentScroll="True"/>
+        <ListBox x:Name="TimeListBox" ItemContainerStyle="{DynamicResource ListBoxItemContainerStyle}" ScrollViewer.CanContentScroll="True" Margin="0,0,0,20"/>
+        <StatusBar VerticalAlignment="Bottom" Height="20">
+            <TextBlock x:Name="TotalTimeTextBlock" Text="总时间："></TextBlock>
+        </StatusBar>
     </Grid>
 </Window>

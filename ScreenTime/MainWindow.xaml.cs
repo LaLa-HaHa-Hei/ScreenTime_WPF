@@ -112,12 +112,12 @@ namespace ScreenTime
         }
         private void RefreshListBox()
         {
-            TotalTimeTextBlock.Text = "总时间：" + SecondToTime(_totalSecond);
+            TotalTimeTextBlock.Text = "总时间：" + ExeItemInfo.SecondToTime(_totalSecond);
             if (_totalSecond == 0) { return; } // 防止0做除数
             foreach (ExeItemInfo item in ExeItemList)
             {
                 item.Percentage = item.Seconds * 100 / _totalSecond;
-                item.TimeText = SecondToTime(item.Seconds);
+                item.TimeText = ExeItemInfo.SecondToTime(item.Seconds);
             }
             TimeListBox.Items.SortDescriptions.Add(_sortDescription);
         }
@@ -166,7 +166,7 @@ namespace ScreenTime
                     IconPath = iconPath,
                     Seconds = Settings.Default.GetTopWindowInterval_s,
                 };
-                exeItem.TimeText = SecondToTime(exeItem.Seconds);
+                exeItem.TimeText = ExeItemInfo.SecondToTime(exeItem.Seconds);
                 exeItem.Percentage = exeItem.Seconds * 100 / (_totalSecond != 0 ? _totalSecond : exeItem.Seconds);
                 ExeItemList.Add(exeItem);
             }
@@ -245,16 +245,6 @@ namespace ScreenTime
         /// <summary>
         /// 将总秒数转换为“x小时x分钟x秒”的形式
         /// </summary>
-        public static string SecondToTime(int second)
-        {
-            string time = "";
-            int hour = second / 3600;
-            int minute = second % 3600 / 60;
-            if (hour != 0) { time = hour.ToString() + "小时"; }
-            if (minute != 0) { time = time + minute.ToString() + "分钟"; }
-            time = time + (second % 60).ToString() + "秒";
-            return time;
-        }
         public void SessionEnding() //关机时通过app.xaml.cs执行
         {
             SaveData($"{_absluteJsonDataFolderPath}\\{_today.ToString("yyyy-MM-dd")}.json", ExeItemList);
@@ -499,6 +489,16 @@ namespace ScreenTime
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         public event PropertyChangedEventHandler? PropertyChanged;
+        public static string SecondToTime(int second)
+        {
+            string time = "";
+            int hour = second / 3600;
+            int minute = second % 3600 / 60;
+            if (hour != 0) { time = hour.ToString() + "小时"; }
+            if (minute != 0) { time = time + minute.ToString() + "分钟"; }
+            time = time + (second % 60).ToString() + "秒";
+            return time;
+        }
     }
     /// <summary>
     /// 自带校准的DispatcherTimer
