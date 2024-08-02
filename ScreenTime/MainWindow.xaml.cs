@@ -444,8 +444,19 @@ namespace ScreenTime
         }
         private void ViewHistoryMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            ViewHistoryWindow w = new(_absluteJsonDataFolderPath); //里面决定是否show
-            //w.Show();
+            Microsoft.Win32.OpenFileDialog openFileDialog = new()
+            {
+                Title = "选择查看的历史",
+                Filter = "JSON files (*.json)|*.json", // 只显示.json文件
+                InitialDirectory = _absluteJsonDataFolderPath // 设置初始文件夹
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string selectedFilePath = openFileDialog.FileName;
+                ViewHistoryWindow w = new(selectedFilePath); //里面决定是否show
+                w.Show();
+            }
         }
     }
     public class ExeItemInfo : INotifyPropertyChanged
