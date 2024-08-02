@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
 using System.Windows;
-using Microsoft.Win32;
 
 namespace ScreenTime
 {
