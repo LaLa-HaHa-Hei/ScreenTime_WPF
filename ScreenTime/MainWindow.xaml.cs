@@ -161,6 +161,7 @@ namespace ScreenTime
                 }
                 ExeItemInfo exeItem = new()
                 {
+                    Name = System.IO.Path.GetFileNameWithoutExtension(filePath),
                     ExePath = filePath,
                     IconPath = iconPath,
                     Seconds = Settings.Default.GetTopWindowInterval_s,
@@ -460,15 +461,7 @@ namespace ScreenTime
     {
         public string Name { get; set; } = string.Empty;
         private string _exePath = string.Empty;
-        public string ExePath
-        {
-            get => _exePath;
-            set
-            {
-                _exePath = value;
-                Name = System.IO.Path.GetFileNameWithoutExtension(ExePath);
-            }
-        }
+        public string ExePath { get; set; } = string.Empty;
         public string IconPath { get; set; } = String.Empty;
         private int _percentage = 0;
         public int Percentage

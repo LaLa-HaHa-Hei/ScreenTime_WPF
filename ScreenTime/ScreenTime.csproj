@@ -10,6 +10,20 @@
 	<StartupObject></StartupObject>
 	<ApplicationIcon>img\32.ico</ApplicationIcon>
 	<PlatformTarget>x64</PlatformTarget>
+	<Version>1.0.4.0</Version>
+	<Authors>$(AssemblyName)</Authors>
+	<PackageReadmeFile></PackageReadmeFile>
+	<RepositoryUrl>https://github.com/LaLa-HaHa-Hei/ScreenTime.git</RepositoryUrl>
+	<Description></Description>
+	<Copyright>作者：代码见三</Copyright>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>portable</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
