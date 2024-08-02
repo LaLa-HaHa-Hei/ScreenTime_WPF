@@ -424,11 +424,12 @@ namespace ScreenTime
 
         public static void SaveData(string filePath, ObservableCollection<ExeItemInfo> data)
         {
+            List< ExeItemInfo> listdata = data.OrderByDescending(item => item.Seconds).ToList();
             JsonSerializerOptions options = new()
             {
                 WriteIndented = true
             };
-            string jsonString = JsonSerializer.Serialize(data, options);
+            string jsonString = JsonSerializer.Serialize(listdata, options);
             File.WriteAllText(filePath, jsonString);
         }
         public static ObservableCollection<ExeItemInfo>? LoadData(string filePath)
@@ -461,8 +462,7 @@ namespace ScreenTime
     }
     public class ExeItemInfo : INotifyPropertyChanged
     {
-        [JsonIgnore]
-        public string Name { get; private set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
         private string _exePath = string.Empty;
         public string ExePath
         {

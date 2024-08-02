@@ -29,7 +29,6 @@ namespace ScreenTime
             List<ExeItemInfo>? exeItemInfos = LoadData(selectedFilePath);
             if (exeItemInfos != null)
             {
-                exeItemInfos.Sort((x, y) => y.Seconds.CompareTo(x.Seconds));
                 InitializeComponent();
                 int totalTime = 0;
                 for (int i = 0; i < exeItemInfos.Count; i++)
