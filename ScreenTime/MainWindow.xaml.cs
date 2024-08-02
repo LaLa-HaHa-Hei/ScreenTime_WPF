@@ -424,11 +424,8 @@ namespace ScreenTime
 
         public static void SaveData(string filePath, ObservableCollection<ExeItemInfo> data)
         {
-            List< ExeItemInfo> listdata = data.OrderByDescending(item => item.Seconds).ToList();
-            JsonSerializerOptions options = new()
-            {
-                WriteIndented = true
-            };
+            List<ExeItemInfo> listdata = data.OrderByDescending(item => item.Seconds).ToList();
+            JsonSerializerOptions options = new() { WriteIndented = true };
             string jsonString = JsonSerializer.Serialize(listdata, options);
             File.WriteAllText(filePath, jsonString);
         }
