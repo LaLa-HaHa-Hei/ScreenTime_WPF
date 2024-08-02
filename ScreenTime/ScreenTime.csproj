@@ -16,8 +16,8 @@
 	<RepositoryUrl>https://github.com/LaLa-HaHa-Hei/ScreenTime.git</RepositoryUrl>
 	<Description></Description>
 	<Copyright>作者：代码见三</Copyright>
-	<AssemblyVersion>1.1.0.0</AssemblyVersion>
-	<FileVersion>1.1.0.0</FileVersion>
+	<AssemblyVersion>1.0.0.0</AssemblyVersion>
+	<FileVersion>1.0.0.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
