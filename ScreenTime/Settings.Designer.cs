@@ -73,7 +73,7 @@ namespace ScreenTime {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool Screenshot {
             get {
                 return ((bool)(this["Screenshot"]));

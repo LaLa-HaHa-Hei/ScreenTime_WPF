@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ScreenTime"
         mc:Ignorable="d"
-        Title="注意事项" Height="371" Width="384">
+        Title="关于" Height="371" Width="384">
     <Grid>
         <TextBlock TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" Text="&#13;如果打开的开机自启动后修改了本程序的名字也就是&quot;ScreenTime.exe&quot;，开机自启动将会失效，需要关掉再开启就好。可以打开注册表(regedit)在\HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run下,叫ScreenTime&#13;&#13;程序所在的目录下&quot;user-data&quot;可以在程序关闭时删掉，里面分别放了 历史记录，截屏，其他程序的图标&#13;&#13;ScreenTime.dll.config文件是配置文件，如果对编程有基础可以谨慎修改，最好通过本程序修改&#13;&#13;本程序是记录哪个窗口获得焦点的时间，并不一定是最上面的窗口&#13;&#13;我学C#也没多长时间，非常欢迎大家帮我改进代码！&#13;希望可以共同交流！QQ群：726549790&#13;bilibili,微信视频号,抖音,QQ小世界，都叫“代码见三”&#13;&#13;"/>
     </Grid>

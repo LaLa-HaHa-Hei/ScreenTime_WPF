@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ScreenTime"
         mc:Ignorable="d"
-        Title="屏幕使用时间「代码见三」" Height="400" Width="350" Icon="/img/hourglass.png" Closing="Window_Closing" Loaded="Window_Loaded">
+        Title="屏幕使用时间「代码见三」" Height="400" Width="307" Icon="/img/hourglass.png" Closing="Window_Closing" Loaded="Window_Loaded">
     <Window.Resources>
         <Style x:Key="ListBoxItemContainerStyle" TargetType="{x:Type ListBoxItem}">
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -34,12 +34,13 @@
             <MenuItem x:Name="SettingsMenuItem" Header="设置" Click="SettingsMenuItem_Click"/>
             <MenuItem Header="帮助">
                 <MenuItem x:Name="OpenInstallationDirectoryMenuItem" Header="打开安装目录" Click="OpenInstallationDirectoryMenuItem_Click"/>
-                <MenuItem x:Name="instructions" Header="注意事项" Click="instructions_Click"></MenuItem>
+                <MenuItem x:Name="instructions" Header="关于" Click="instructions_Click"></MenuItem>
             </MenuItem>
         </Menu>
         <ListBox x:Name="TimeListBox"  ItemContainerStyle="{DynamicResource ListBoxItemContainerStyle}" Margin="0,20,0,20" ScrollViewer.CanContentScroll="True"/>
         <StatusBar Height="20" VerticalAlignment="Bottom">
-            <TextBlock x:Name="TotalTimeTextBlock" TextWrapping="Wrap" Text="总时间："/>
+            <TextBlock Text="版本: 1.0.0-WPF" Width="121" Height="15"></TextBlock>
+            <TextBlock x:Name="TotalTimeTextBlock" TextWrapping="Wrap" Text="总时间：" Height="15"/>
         </StatusBar>
     </Grid>
 </Window>
