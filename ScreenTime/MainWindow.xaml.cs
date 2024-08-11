@@ -2,14 +2,13 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-//using Newtonsoft.Json;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Threading;
+using System.Windows.Media.Imaging;
 
 namespace ScreenTime
 {
@@ -25,74 +24,57 @@ namespace ScreenTime
 
         private int _totalSecond = 0;
         private SortDescription _sortDescription; //ListBox排序
-        private readonly DateTime _today = DateTime.Now; // 记录开始运行时的日期，在新一天后重启程序
-        private readonly string _baseDirectory = AppDomain.CurrentDomain.BaseDirectory; //程序所在文件夹的路径，后面有"\"
-        private readonly string _executablePath = System.Windows.Forms.Application.ExecutablePath;//自己exe的完整路径包括exe，也可是Process.GetCurrentProcess().MainModule?.FileName
+        private DateTime _today = DateTime.Now; // 记录开始运行时的日期，在新一天后重启程序
+        //各种路径
+        //System.Windows.Forms.Application.ExecutablePath
+        private readonly string _appDirectory = AppDomain.CurrentDomain.BaseDirectory; //程序所在文件夹的路径，后面有"\"
+        private readonly string _exePath= Assembly.GetExecutingAssembly().Location;
+        private readonly string _exeIconFolder = "exe_icon";
+        private readonly string _jsonDataFolder = "history";
         private string _absluteExeIconFolderPath;
-        private string _absluteScreenshotFolderPath;
         private string _absluteJsonDataFolderPath;
+        private string _absluteJsonDataPath;
         //定时器
         private readonly AccurateDispatcherTimer _getTopWindowTimer = new();
-        private readonly DispatcherTimer _screenshotTimer = new();
         private readonly DispatcherTimer _refreshListBoxTimer = new();
-        //截屏
-        private readonly EncoderParameters _encoderParams = new(1);// 创建Encoder参数对象来指定JPEG的质量
-        private readonly ImageCodecInfo _jpegCodec = GetEncoderInfo("image/jpeg");// 获取JPEG编码器信息
         //托盘
         private readonly System.Windows.Forms.NotifyIcon TrayNotifyIcon;
         private readonly ContextMenuStrip TrayContextMenuStrip;
         //数据
-        private ObservableCollection<ExeItemInfo> ExeItemList { get; set; } = [];//所有有焦点的窗口对应的exe
+        private ObservableCollection<ExeItemInfo> ExeItemList { get; set; } //所有有焦点的窗口对应的exe
 
         public MainWindow()
         {
             InitializeComponent();
-            //截屏
-            _encoderParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, Settings.Default.JpegQuality); //quality是0-100之间的数值，100为最高质量，0为最低质量
-            //处理Settings中的路径，如果是相对路径，则转为绝对路径
-            Settings.Default.JsonDataFolderPath = Settings.Default.JsonDataFolderPath.Replace('/', '\\');
-            if (Settings.Default.JsonDataFolderPath[0] == '.' && Settings.Default.JsonDataFolderPath[1] == '\\')
-                _absluteJsonDataFolderPath = _baseDirectory + Settings.Default.JsonDataFolderPath.Substring(2);
-            else
-                _absluteJsonDataFolderPath = Settings.Default.JsonDataFolderPath;
-            Settings.Default.ExeIconFolderPath = Settings.Default.ExeIconFolderPath.Replace('/', '\\');
-            if (Settings.Default.ExeIconFolderPath[0] == '.' && Settings.Default.ExeIconFolderPath[1] == '\\')
-                _absluteExeIconFolderPath = string.Concat(_baseDirectory, Settings.Default.ExeIconFolderPath.AsSpan(2));
-            else
-                _absluteExeIconFolderPath = Settings.Default.ScreenshotFolderPath;
-            Settings.Default.ScreenshotFolderPath = Settings.Default.ScreenshotFolderPath.Replace('/', '\\');
-            if (Settings.Default.ScreenshotFolderPath[0] == '.' && Settings.Default.ScreenshotFolderPath[1] == '\\')
-                _absluteScreenshotFolderPath = string.Concat(_baseDirectory, Settings.Default.ScreenshotFolderPath.AsSpan(2));
-            else
-                _absluteScreenshotFolderPath = Settings.Default.ScreenshotFolderPath;
-            Settings.Default.Save();//保存用 \ 替换掉 / 后的路径
-            Settings.Default.PropertyChanged += Settings_PropertyChanged;//配置被改变时执行，一定在处理路径后
-            _sortDescription = new SortDescription("Seconds", ListSortDirection.Descending);
-            //创建必要文件夹
-            if (!Directory.Exists(_absluteJsonDataFolderPath))
-                Directory.CreateDirectory(_absluteJsonDataFolderPath);
+            //处理文件路径
+            _absluteExeIconFolderPath = Path.Combine(_appDirectory, _exeIconFolder);
+            _absluteJsonDataFolderPath = Path.Combine(_appDirectory, _jsonDataFolder);
+            _absluteJsonDataPath = Path.Combine(_absluteJsonDataFolderPath, _today.ToString("yyyy-MM-dd") + ".json");
+            //创建文件夹
             if (!Directory.Exists(_absluteExeIconFolderPath))
                 Directory.CreateDirectory(_absluteExeIconFolderPath);
-            if (!Directory.Exists(_absluteScreenshotFolderPath + "\\" + _today.ToString("yyyy-MM-dd")))
-                Directory.CreateDirectory(_absluteScreenshotFolderPath + "\\" + _today.ToString("yyyy-MM-dd"));
-            //Debug.WriteLine(Settings.Default.ExeIconFolderPath);
-            //Debug.WriteLine(Settings.Default.ScreenshotFolderPath);
-            //加载数据
-            var data = LoadData($"{_absluteJsonDataFolderPath}\\{_today.ToString("yyyy-MM-dd")}.json");
+            if (!Directory.Exists(_absluteJsonDataFolderPath))
+                Directory.CreateDirectory(_absluteJsonDataFolderPath);
+            
+            Settings.Default.PropertyChanged += Settings_PropertyChanged;//配置被改变时执行
+            _sortDescription = new SortDescription("Seconds", ListSortDirection.Descending);
+            //加载数据,绑定列表
+            var data = LoadData(_absluteJsonDataPath);
             if (data != null)
             {
                 ExeItemList = data;
                 for (int i = 0; i < ExeItemList.Count; i++)
                     _totalSecond += ExeItemList[i].Seconds;
             }
+            else
+            {
+                ExeItemList = [];
+            }
             TimeListBox.ItemsSource = ExeItemList;
             //计时器
-            _getTopWindowTimer.Tick += TimerTick_GetTopwindow;
+            _getTopWindowTimer.Tick += (sender, e) => { GetTopwindow(); } ;
             _getTopWindowTimer.Interval_ms = Settings.Default.GetTopWindowInterval_s * 1000;
             _getTopWindowTimer.Start();
-            _screenshotTimer.Tick += (sender, e) => { Screenshot(); };
-            _screenshotTimer.Interval = TimeSpan.FromSeconds(Settings.Default.ScreenshotInterval_s);
-            _screenshotTimer.Start();
             _refreshListBoxTimer.Interval = TimeSpan.FromSeconds(Settings.Default.RefreshListBoxInterval_s);
             _refreshListBoxTimer.Tick += (sender, e) => { RefreshListBox(); };
             //托盘
@@ -104,6 +86,7 @@ namespace ScreenTime
         {
             if (DateTime.Now.Date > _today.Date)
             {
+                SaveData(_absluteJsonDataPath);
                 Process.Start(System.Windows.Forms.Application.ExecutablePath);
                 TrayNotifyIcon.Visible = false;
                 ExitApp();
@@ -121,7 +104,7 @@ namespace ScreenTime
             TimeListBox.Items.SortDescriptions.Add(_sortDescription);
         }
         // 获取当前焦点窗口并记录时间
-        private void TimerTick_GetTopwindow(object? sender, EventArgs e)
+        private void GetTopwindow()
         {
             CheckDate();
             _totalSecond += Settings.Default.GetTopWindowInterval_s;
@@ -161,84 +144,37 @@ namespace ScreenTime
                 }
                 ExeItemInfo exeItem = new()
                 {
-                    Name = System.IO.Path.GetFileNameWithoutExtension(filePath),
+                    Name = Path.GetFileNameWithoutExtension(filePath),
                     ExePath = filePath,
                     IconPath = iconPath,
                     Seconds = Settings.Default.GetTopWindowInterval_s,
+                    TimeText = ExeItemInfo.SecondToTime(Settings.Default.GetTopWindowInterval_s),
+                    Percentage = Settings.Default.GetTopWindowInterval_s * 100 / (_totalSecond != 0 ? _totalSecond : Settings.Default.GetTopWindowInterval_s)
                 };
-                exeItem.TimeText = ExeItemInfo.SecondToTime(exeItem.Seconds);
-                exeItem.Percentage = exeItem.Seconds * 100 / (_totalSecond != 0 ? _totalSecond : exeItem.Seconds);
                 ExeItemList.Add(exeItem);
             }
         }
-        private void OpenInstallationDirectoryMenuItem_Click(object sender, RoutedEventArgs e) => Process.Start("explorer.exe", $"/select,{_executablePath}");
-        private void Screenshot()
+        public static void SaveBitmapAsJpeg(BitmapSource bitmap, string filePath, int quality)
         {
-            if (Settings.Default.Screenshot == false) { return; }
-            System.Drawing.Rectangle bounds = Screen.GetBounds(System.Drawing.Point.Empty);
-            using Bitmap bitmap = new(bounds.Width, bounds.Height);
-            using (Graphics g = Graphics.FromImage(bitmap))
+            JpegBitmapEncoder jpegEncoder = new()
             {
-                // 将屏幕内容绘制到Bitmap上  
-                g.CopyFromScreen(System.Drawing.Point.Empty, System.Drawing.Point.Empty, bounds.Size);
-            }
-            bitmap.Save($"{_absluteScreenshotFolderPath}\\{_today:yyyy-MM-dd}\\{DateTime.Now:HH：mm}.jpeg", _jpegCodec, _encoderParams);
+                QualityLevel = quality,
+            };
+            jpegEncoder.Frames.Add(BitmapFrame.Create(bitmap));
+            using FileStream fs = new(filePath, FileMode.Create);
+            jpegEncoder.Save(fs);
         }
+
         // 配置被改变时
         private void Settings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
-                case "JpegQuality":
-                    _encoderParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, Settings.Default.JpegQuality);
-                    break;
                 case "GetTopWindowInterval_s":
                     _getTopWindowTimer.Interval_ms = Settings.Default.GetTopWindowInterval_s * 1000;
                     break;
-                case "ScreenshotInterval_s":
-                    _screenshotTimer.Interval = TimeSpan.FromSeconds(Settings.Default.ScreenshotInterval_s);
-                    break;
                 case "RefreshListBoxInterval_s":
                     _refreshListBoxTimer.Interval = TimeSpan.FromSeconds(Settings.Default.RefreshListBoxInterval_s);
-                    break;
-                case "ExeIconFolderPath":
-                    Settings.Default.PropertyChanged -= Settings_PropertyChanged; //否则死循环
-                    Settings.Default.ExeIconFolderPath = Settings.Default.ExeIconFolderPath.Replace('/', '\\');
-                    Settings.Default.PropertyChanged += Settings_PropertyChanged;
-                    //相对转绝对
-                    if (Settings.Default.ExeIconFolderPath[0] == '.' && Settings.Default.ExeIconFolderPath[1] == '\\')
-                        _absluteExeIconFolderPath = string.Concat(_baseDirectory, Settings.Default.ExeIconFolderPath.AsSpan(2));
-                    else
-                        _absluteExeIconFolderPath = Settings.Default.ExeIconFolderPath;
-                    //创建文件夹
-                    if (!Directory.Exists(_absluteExeIconFolderPath))
-                        Directory.CreateDirectory(_absluteExeIconFolderPath);
-                    break;
-                case "ScreenshotFolderPath":
-                    Settings.Default.PropertyChanged -= Settings_PropertyChanged;
-                    Settings.Default.ScreenshotFolderPath = Settings.Default.ScreenshotFolderPath.Replace('/', '\\');
-                    Settings.Default.PropertyChanged += Settings_PropertyChanged;
-                    //相对转绝对
-                    if (Settings.Default.ScreenshotFolderPath[0] == '.' && Settings.Default.ScreenshotFolderPath[1] == '\\')
-                        _absluteScreenshotFolderPath = _baseDirectory + Settings.Default.ScreenshotFolderPath.Substring(2);
-                    else
-                        _absluteScreenshotFolderPath = Settings.Default.ScreenshotFolderPath;
-                    //创建文件夹
-                    if (!Directory.Exists(_absluteScreenshotFolderPath + "\\" + _today.ToString("yyyy-MM-dd")))
-                        Directory.CreateDirectory(_absluteScreenshotFolderPath + "\\" + _today.ToString("yyyy-MM-dd"));
-                    break;
-                case "JsonDataFolderPath":
-                    Settings.Default.PropertyChanged -= Settings_PropertyChanged;
-                    Settings.Default.JsonDataFolderPath = Settings.Default.JsonDataFolderPath.Replace('/', '\\');
-                    Settings.Default.PropertyChanged += Settings_PropertyChanged;
-                    //相对转绝对
-                    if (Settings.Default.JsonDataFolderPath[0] == '.' && Settings.Default.JsonDataFolderPath[1] == '\\')
-                        _absluteJsonDataFolderPath = _baseDirectory + Settings.Default.JsonDataFolderPath.Substring(2);
-                    else
-                        _absluteJsonDataFolderPath = Settings.Default.JsonDataFolderPath;
-                    //创建文件夹
-                    if (!Directory.Exists(_absluteJsonDataFolderPath))
-                        Directory.CreateDirectory(_absluteJsonDataFolderPath);
                     break;
             }
         }
@@ -247,7 +183,7 @@ namespace ScreenTime
         /// </summary>
         public void SessionEnding() //关机时通过app.xaml.cs执行
         {
-            SaveData($"{_absluteJsonDataFolderPath}\\{_today.ToString("yyyy-MM-dd")}.json", ExeItemList);
+            SaveData(_absluteJsonDataPath);
         }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -272,12 +208,12 @@ namespace ScreenTime
         private void HideWindow()
         {
             Hide();
-            SaveData($"{_absluteJsonDataFolderPath}\\{_today.ToString("yyyy-MM-dd")}.json", ExeItemList);
+            SaveData(_absluteJsonDataPath);
             _refreshListBoxTimer.Stop();
         }
         private void ExitApp()
         {
-            SaveData($"{_absluteJsonDataFolderPath}\\{_today.ToString("yyyy-MM-dd")}.json", ExeItemList);
+            SaveData(_absluteJsonDataPath);
             TrayNotifyIcon.Visible = false;
             App.Current.Shutdown();
         }
@@ -313,24 +249,6 @@ namespace ScreenTime
                     }
                 }
             };
-            /*            //托盘菜单
-                        ToolStripMenuItem memoryRecyclingItem = new("强制回收内存");
-                        memoryRecyclingItem.Font = new Font(memoryRecyclingItem.Font.FontFamily.Name, 9F);
-                        memoryRecyclingItem.Click += (sender, arg) =>
-                        {
-                            GC.Collect();
-                        };
-                        TrayContextMenuStrip.Items.Add(memoryRecyclingItem);*/
-
-            ToolStripMenuItem restartItem = new("重启程序");
-            restartItem.Font = new Font(restartItem.Font.FontFamily.Name, 9F);
-            restartItem.Click += (sender, arg) =>
-            {
-                Process.Start(_executablePath);
-                TrayNotifyIcon.Visible = false;
-                ExitApp();
-            };
-            TrayContextMenuStrip.Items.Add(restartItem);
 
             ToolStripMenuItem selfStartingItem = new("开机自启动");
             selfStartingItem.Font = new Font(selfStartingItem.Font.FontFamily.Name, 9F);
@@ -349,25 +267,16 @@ namespace ScreenTime
                 }
                 else
                 {
-                    runKey?.SetValue("ScreenTime", _executablePath);
+                    runKey?.SetValue("ScreenTime", _exePath);
                 }
             };
             TrayContextMenuStrip.Items.Add(selfStartingItem);
-
-            ToolStripMenuItem screenshotItem = new("截图");
-            screenshotItem.Font = new Font(screenshotItem.Font.FontFamily.Name, 9F);
-            screenshotItem.Checked = true;
-            screenshotItem.CheckOnClick = true;
-            screenshotItem.Click += (sender, arg) =>
-            {
-            };
-            TrayContextMenuStrip.Items.Add(screenshotItem);
 
             ToolStripMenuItem openInstallationDirectoryItem = new("安装目录");
             openInstallationDirectoryItem.Font = new Font(openInstallationDirectoryItem.Font.FontFamily.Name, 9F);
             openInstallationDirectoryItem.Click += (sender, arg) =>
             {
-                Process.Start("explorer.exe", $"/select,{_executablePath}");
+                Process.Start("explorer.exe", $"/select,{_exePath}");
             };
             TrayContextMenuStrip.Items.Add(openInstallationDirectoryItem);
 
@@ -391,18 +300,6 @@ namespace ScreenTime
             p.Y -= TrayNotifyIcon?.ContextMenuStrip?.Height ?? 27 * 5;
             TrayNotifyIcon?.ContextMenuStrip?.Show(p);
         }
-        // 获取指定文件扩展名对应的编码器
-        private static ImageCodecInfo GetEncoderInfo(string mimeType)
-        {
-            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageEncoders();
-            foreach (ImageCodecInfo codec in codecs)
-            {
-                if (codec.MimeType == mimeType)
-                    return codec;
-            }
-            throw new Exception($"No encoder for mime type: {mimeType}");
-        }
-
         private void SettingsMenuItem_Click(object sender, RoutedEventArgs e)
         {
             SettingsWindow w = new()
@@ -412,20 +309,11 @@ namespace ScreenTime
             w.Show();
         }
 
-        private void instructions_Click(object sender, RoutedEventArgs e)
+        private readonly JsonSerializerOptions _options = new() { WriteIndented = true };
+        public void SaveData(string filePath)
         {
-            InstructionsWindow w = new()
-            {
-                Owner = this
-            };
-            w.Show();
-        }
-
-        public static void SaveData(string filePath, ObservableCollection<ExeItemInfo> data)
-        {
-            List<ExeItemInfo> listdata = data.OrderByDescending(item => item.Seconds).ToList();
-            JsonSerializerOptions options = new() { WriteIndented = true };
-            string jsonString = JsonSerializer.Serialize(listdata, options);
+            List<ExeItemInfo> listdata = ExeItemList.OrderByDescending(item => item.Seconds).ToList();
+            string jsonString = JsonSerializer.Serialize(listdata, _options);
             File.WriteAllText(filePath, jsonString);
         }
         public static ObservableCollection<ExeItemInfo>? LoadData(string filePath)
@@ -436,7 +324,6 @@ namespace ScreenTime
                 return JsonSerializer.Deserialize<ObservableCollection<ExeItemInfo>>(jsonString);
             }
             else
-                //return new ObservableCollection<ExeItemInfo>();
                 return null;
         }
         private void ViewHistoryMenuItem_Click(object sender, RoutedEventArgs e)
@@ -454,6 +341,20 @@ namespace ScreenTime
                 ViewHistoryWindow w = new(selectedFilePath); //里面决定是否show
                 w.Show();
             }
+        }
+
+        private void OpenUserDataDirectoryMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start("explorer.exe", Settings.Default.UserDataDirectory);
+        }
+
+        private void OpenAboutWindowMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            AboutWindow w = new();
+            {
+                Owner = this;
+            }
+            w.Show();
         }
     }
     public class ExeItemInfo : INotifyPropertyChanged

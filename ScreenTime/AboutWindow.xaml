@@ -1,0 +1,12 @@
+﻿<Window x:Class="ScreenTime.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ScreenTime"
+        mc:Ignorable="d"
+        Title="AboutWindow" Height="202" Width="419">
+    <Grid>
+        <TextBlock TextWrapping="Wrap"><Run/><LineBreak/><Run Text="作者: 代码见三"/><LineBreak/><Run Text="版本: 2.0.0"/><LineBreak/><Run Text="GitHub: https://github.com/LaLa-HaHa-Hei/ScreenTime_WPF"/><LineBreak/><Run Language="zh-cn" Text="Q群: 726549790"/><LineBreak/><Run/><LineBreak/><Run Text="版本格式说明：主版本号.次版本号.修订号，版本号递增规则如下："/><LineBreak/><Run Language="zh-cn" Text="1."/><Run Text="主版本号："/><Run Language="zh-cn" Text="与之前版本不兼容, 需要删掉之前版本所有数据 ! ! !"/><LineBreak/><Run Language="zh-cn" Text="2."/><Run Text="次版本号：向下兼容的功能性新增"/><LineBreak/><Run Language="zh-cn" Text="3."/><Run Text="修订号：向下兼容的问题修正"/></TextBlock>
+    </Grid>
+</Window>

@@ -25,42 +25,6 @@ namespace ScreenTime {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("10")]
-        public int JpegQuality {
-            get {
-                return ((int)(this["JpegQuality"]));
-            }
-            set {
-                this["JpegQuality"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(".\\user_data\\exe_icon")]
-        public string ExeIconFolderPath {
-            get {
-                return ((string)(this["ExeIconFolderPath"]));
-            }
-            set {
-                this["ExeIconFolderPath"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(".\\user_data\\screenshot")]
-        public string ScreenshotFolderPath {
-            get {
-                return ((string)(this["ScreenshotFolderPath"]));
-            }
-            set {
-                this["ScreenshotFolderPath"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int GetTopWindowInterval_s {
             get {
@@ -68,30 +32,6 @@ namespace ScreenTime {
             }
             set {
                 this["GetTopWindowInterval_s"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool Screenshot {
-            get {
-                return ((bool)(this["Screenshot"]));
-            }
-            set {
-                this["Screenshot"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("240")]
-        public int ScreenshotInterval_s {
-            get {
-                return ((int)(this["ScreenshotInterval_s"]));
-            }
-            set {
-                this["ScreenshotInterval_s"] = value;
             }
         }
         
@@ -121,13 +61,13 @@ namespace ScreenTime {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(".\\user_data\\data")]
-        public string JsonDataFolderPath {
+        [global::System.Configuration.DefaultSettingValueAttribute(".\\data")]
+        public string UserDataDirectory {
             get {
-                return ((string)(this["JsonDataFolderPath"]));
+                return ((string)(this["UserDataDirectory"]));
             }
             set {
-                this["JsonDataFolderPath"] = value;
+                this["UserDataDirectory"] = value;
             }
         }
     }

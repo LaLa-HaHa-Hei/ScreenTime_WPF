@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace ScreenTime
 {
     /// <summary>
-    /// InstructionsWindow.xaml 的交互逻辑
+    /// AboutWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class InstructionsWindow : Window
+    public partial class AboutWindow : Window
     {
-        public InstructionsWindow()
+        public AboutWindow()
         {
             InitializeComponent();
         }
