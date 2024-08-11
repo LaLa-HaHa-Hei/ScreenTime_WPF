@@ -251,8 +251,6 @@ namespace ScreenTime
         }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            //从任务管理器结束认为也会触发，所以先保存一下
-            SaveData($"{_absluteJsonDataFolderPath}\\{_today.ToString("yyyy-MM-dd")}.json", ExeItemList);
             HideWindow();
             e.Cancel = true;
         }
@@ -274,6 +272,7 @@ namespace ScreenTime
         private void HideWindow()
         {
             Hide();
+            SaveData($"{_absluteJsonDataFolderPath}\\{_today.ToString("yyyy-MM-dd")}.json", ExeItemList);
             _refreshListBoxTimer.Stop();
         }
         private void ExitApp()
